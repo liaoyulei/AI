@@ -1,0 +1,91 @@
+=== ComParE 2016, Deception Task ===
+
+Yue Zhang <yzhang9@ic.ac.uk>
+
+2015/03/07
+
+I. Overview
+
+The Deception task is about identifying deceptive speech based on acoustics.
+
+The DECEPTIVE SPEECH DATABASE (DSD) is based on an experiment where university 
+student participants were either imposters with false identities who stole an exam key 
+from a university computer and then lied about the theft or were innocent and 
+told the truth about their activities.
+
+Perl and Shell scripts are provided to reproduce the baseline on Linux systems.
+They have been tested on Ubuntu 14.04 installation.
+
+A Deception label (D/ND) has to be provided for every instance in the test set, 
+along with a confidence score.
+
+II. Reproducing the baseline
+
+- Make sure Weka's JAR file (weka.jar) is in an accessible location
+- Adjust the path name in baseline*.sh to match the location of weka.jar
+  on your system
+- Change to the "baseline" directory.
+- Execute
+  sh baseline*.sh <complexity> <epsilon>
+  where `complexity` is the SVM complexity (default: C=1.0E-4)
+  and 'epsilon' is the epsilon-intensive loss L (default: L=0.1)
+  to get results for the binary classification task.
+- To access predictions and results, look in the baseline/eval/ folders.
+
+III. Directory structure
+
+wav/: Waveform files for training and test sets
+	Filename convention: <set>_NNNN.wav where 
+	`set` in { train, devel, test} and 
+	NNNN = randomised sample number 
+
+lab/: Label files
+	ComParE2016_Deception.tsv: Containing the labels and meta data of the training and development sets
+	Fields:
+	file_name
+	Deception: Deception (D) vs Non-Deception (ND)
+	subjectId
+	gender
+	ethinicity
+
+arff/: Weka ARFF files containing instance supra-segmental features and labels
+	(test: no labels given)
+	Naming convention: ComParE2016_Deception.ComParE.<set>.arff
+	where 'set' in {train, devel, test}
+
+baseline/: * Baseline recognition system *
+
+	baseline*.sh: Scripts for development and test set evaluation
+	Please adjust the file system paths in this script to match your
+	system. A working Weka installation is required.
+
+	This script calls the following Perl scripts:
+	
+	upsample.pl: Upsampling the training partitions by predefined factors
+
+	join_arffs.pl: Joining training and development ARFF files for evaluation on the test set.
+
+	format_pred.pl: Converting Weka predictions to ARFF format (similar to final result submission format)
+
+	score.pl: Calculate classification scores from reference and prediction ARFFs
+
+IV. Baseline results (development set)
+
+This is only for sanity checks, more results will be provided in the baseline
+paper (check the webpage for updates).
+
+$ sh baseline_train_devel.sh
+
+Accuracy = 71.0%
+UAR = 61.9%
+
+V. Change log
+
+- wav/: 
+  devel_0195.wav is removed and
+  train_0156.wav, devel_0283.wav, test_0401.wav are trimmed to the initial 3s
+- arff/: 
+  updated feature files are provided
+- lab/:
+  devel_0195.wav is removed
+
